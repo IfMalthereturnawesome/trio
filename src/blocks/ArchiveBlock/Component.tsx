@@ -5,7 +5,7 @@ import { getPayloadHMR } from '@payloadcms/next/utilities'
 import React from 'react'
 import RichText from '@/components/RichText'
 
-import { CollectionArchive } from '@/components/CollectionArchive'
+import { CollectionArchive } from '@/components/CollectionArchive/Posts'
 
 export const ArchiveBlock: React.FC<
   ArchiveBlockProps & {

@@ -17,6 +17,7 @@ import {
   IS_UNDERLINE,
 } from './nodeFormat'
 import type { Page } from '@/payload-types'
+import { FAQBlockComponent } from '@/blocks/FAQBlock/Component'
 
 export type NodeTypes =
   | DefaultNodeTypes
@@ -125,6 +126,8 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
               return <BannerBlock className="col-start-2 mb-4" key={index} {...block} />
             case 'code':
               return <CodeBlock className="col-start-2" key={index} {...block} />
+            case 'faq':
+              return <FAQBlockComponent className="col-start-2" key={index} {...block} />
             default:
               return null
           }

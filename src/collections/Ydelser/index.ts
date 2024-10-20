@@ -6,6 +6,7 @@ import {
   HeadingFeature,
   HorizontalRuleFeature,
   InlineToolbarFeature,
+  UnorderedListFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
@@ -15,8 +16,7 @@ import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
-import { populateAuthors } from './hooks/populateAuthors'
-import { revalidatePost } from './hooks/revalidatePost'
+import { revalidateService } from './hooks/revalidateService'
 
 import {
   MetaDescriptionField,
@@ -26,10 +26,11 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
+import { populateAuthors } from '@/collections/Posts/hooks/populateAuthors'
 import { FAQBlock } from '@/blocks/FAQBlock/config'
 
-export const Posts: CollectionConfig = {
-  slug: 'posts',
+export const Ydelser: CollectionConfig = {
+  slug: 'ydelser',
   access: {
     create: authenticated,
     delete: authenticated,
@@ -41,13 +42,13 @@ export const Posts: CollectionConfig = {
     livePreview: {
       url: ({ data }) => {
         const path = generatePreviewPath({
-          path: `/posts/${typeof data?.slug === 'string' ? data.slug : ''}`,
+          path: `/ydelser/${typeof data?.slug === 'string' ? data.slug : ''}`,
         })
         return `${process.env.NEXT_PUBLIC_SERVER_URL}${path}`
       },
     },
     preview: (doc) =>
-      generatePreviewPath({ path: `/posts/${typeof doc?.slug === 'string' ? doc.slug : ''}` }),
+      generatePreviewPath({ path: `/ydelser/${typeof doc?.slug === 'string' ? doc.slug : ''}` }),
     useAsTitle: 'title',
   },
   fields: [
@@ -55,15 +56,6 @@ export const Posts: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
-    },
-    {
-      name: 'alertBox',
-      type: 'ui',
-      admin: {
-        components: {
-          Field: '@/components/AlertBox',
-        },
-      },
     },
     {
       type: 'tabs',
@@ -78,7 +70,7 @@ export const Posts: CollectionConfig = {
                   return [
                     ...rootFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
+                    BlocksFeature({ blocks: [Banner, Code, MediaBlock, FAQBlock] }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
@@ -94,7 +86,7 @@ export const Posts: CollectionConfig = {
         {
           fields: [
             {
-              name: 'relatedPosts',
+              name: 'relatedYdelser',
               type: 'relationship',
               admin: {
                 position: 'sidebar',
@@ -107,17 +99,15 @@ export const Posts: CollectionConfig = {
                 }
               },
               hasMany: true,
-              relationTo: 'posts',
+              relationTo: 'ydelser',
             },
             {
-              name: 'categories',
-              type: 'relationship',
-              admin: {
-                position: 'sidebar',
-              },
-              hasMany: true,
-              relationTo: 'categories',
-            },
+              name: 'iconImage',
+              label: 'Icon',
+              type: 'upload',
+              relationTo: 'media',
+
+            }
           ],
           label: 'Meta',
         },
@@ -148,6 +138,29 @@ export const Posts: CollectionConfig = {
             }),
           ],
         },
+        {
+          name: 'card',
+          label: 'Service card',
+          fields: [
+            {
+              name: 'cardDescription',
+              type: 'text',
+              label: 'Card Description',
+            },
+            {
+              name: 'bulletPoints',
+              type: 'richText',
+              label: 'Bullet Points',
+              editor: lexicalEditor({
+                features: ({ rootFeatures }) => [
+                  ...rootFeatures,
+                  UnorderedListFeature(), // Include the unordered list feature
+                  // You can add more features if needed
+                ],
+              }),
+            },
+          ]
+        }
       ],
     },
 
@@ -171,44 +184,10 @@ export const Posts: CollectionConfig = {
         ],
       },
     },
-    {
-      name: 'authors',
-      type: 'relationship',
-      admin: {
-        position: 'sidebar',
-      },
-      hasMany: true,
-      relationTo: 'users',
-    },
-    // This field is only used to populate the user data via the `populateAuthors` hook
-    // This is because the `user` collection has access control locked to protect user privacy
-    // GraphQL will also not return mutated user data that differs from the underlying schema
-    {
-      name: 'populatedAuthors',
-      type: 'array',
-      access: {
-        update: () => false,
-      },
-      admin: {
-        disabled: true,
-        readOnly: true,
-      },
-      fields: [
-        {
-          name: 'id',
-          type: 'text',
-        },
-        {
-          name: 'name',
-          type: 'text',
-        },
-      ],
-    },
     ...slugField(),
   ],
   hooks: {
-    afterChange: [revalidatePost],
-    afterRead: [populateAuthors],
+    afterChange: [revalidateService],
   },
   versions: {
     drafts: {

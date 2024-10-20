@@ -1,6 +1,6 @@
 import type { Metadata } from 'next/types'
 
-import { CollectionArchive } from '@/components/CollectionArchive/Posts'
+import { CollectionArchive } from '@/components/CollectionArchive/Ydelser'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
@@ -13,8 +13,8 @@ export const revalidate = 600
 export default async function Page() {
   const payload = await getPayloadHMR({ config: configPromise })
 
-  const posts = await payload.find({
-    collection: 'posts',
+  const ydelser = await payload.find({
+    collection: 'ydelser',
     depth: 1,
     limit: 12,
   })
@@ -23,24 +23,24 @@ export default async function Page() {
     <div className="pt-24 pb-24">
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+          <h1>Ydelser vi tilbyder</h1>
         </div>
       </div>
 
       <div className="container mb-8">
         <PageRange
-          collection="posts"
-          currentPage={posts.page}
+          collection="ydelser"
+          currentPage={ydelser.page}
           limit={12}
-          totalDocs={posts.totalDocs}
+          totalDocs={ydelser.totalDocs}
         />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive ydelser={ydelser.docs} />
 
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
+        {ydelser.totalPages > 1 && ydelser.page && (
+          <Pagination page={ydelser.page} totalPages={ydelser.totalPages} />
         )}
       </div>
     </div>

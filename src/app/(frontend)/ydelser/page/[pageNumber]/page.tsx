@@ -13,8 +13,8 @@ export const revalidate = 600
 export default async function Page({ params: { pageNumber = 2 } }) {
   const payload = await getPayloadHMR({ config: configPromise })
 
-  const posts = await payload.find({
-    collection: 'posts',
+  const ydelser = await payload.find({
+    collection: 'ydelser',
     depth: 1,
     limit: 12,
     page: pageNumber,
@@ -30,18 +30,18 @@ export default async function Page({ params: { pageNumber = 2 } }) {
 
       <div className="container mb-8">
         <PageRange
-          collection="posts"
-          currentPage={posts.page}
+          collection="ydelser"
+          currentPage={ydelser.page}
           limit={12}
-          totalDocs={posts.totalDocs}
+          totalDocs={ydelser.totalDocs}
         />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive ydelser={ydelser.docs} />
 
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
+        {ydelser.totalPages > 1 && ydelser.page && (
+          <Pagination page={ydelser.page} totalPages={ydelser.totalPages} />
         )}
       </div>
     </div>
@@ -56,15 +56,15 @@ export function generateMetadata({ params: { pageNumber = 2 } }): Metadata {
 
 export async function generateStaticParams() {
   const payload = await getPayloadHMR({ config: configPromise })
-  const posts = await payload.find({
-    collection: 'posts',
+  const ydelser = await payload.find({
+    collection: 'ydelser',
     depth: 0,
     limit: 10,
   })
 
   const pages: number[] = []
 
-  for (let i = 1; i <= posts.totalPages; i++) {
+  for (let i = 1; i <= ydelser.totalPages; i++) {
     pages.push(i)
   }
 

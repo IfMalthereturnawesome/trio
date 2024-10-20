@@ -21,6 +21,10 @@ const collectionLabels = {
     plural: 'Projects',
     singular: 'Project',
   },
+  ydelser: {
+    plural: 'Ydelser',
+    singular: 'Ydelse',
+  }
 }
 
 const Title: React.FC = () => <span>Dashboard</span>
